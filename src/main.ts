@@ -175,7 +175,7 @@ const formatStageInfo = async (
     if (drops.length) {
       operationData += `|${field} = `;
       for (const drop of drops) {
-        operationData += `{{I|${itemMap[drop.id].name}|rarity=${
+        operationData += `{{I|${itemMap[drop.id].name.trim()}|rarity=${
           getItemRarity(drop)
         }}}`;
       }
@@ -202,7 +202,7 @@ const formatStageInfo = async (
           getEnemyCount(e2) - getEnemyCount(e1)
         )
       ) {
-        operationData += `{{E|${enemyMap[enemy.id].name}${
+        operationData += `{{E|${enemyMap[enemy.id].name.trim()}${
           enemy.id in enemyCounter ? `|${enemyCounter[enemy.id]}` : ""
         }}}`;
       }
