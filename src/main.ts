@@ -201,12 +201,12 @@ button.addEventListener("click", async (e) => {
         } else {
           if (
             stageInfo.stageInfos.find((s) =>
-              s.diffGroup == "FOUR_STAR"
+              s.difficulty == "FOUR_STAR"
             )
           ) {
             operationInfo += `Normal Mode`;
           } else if (
-            stageInfo.stageInfos.find((s) => s.diffGroup == "SIX_STAR")
+            stageInfo.stageInfos.find((s) => s.difficulty == "SIX_STAR")
           ) {
             operationInfo += `Standard Combat`;
           } else {
