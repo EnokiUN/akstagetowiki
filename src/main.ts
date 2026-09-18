@@ -9,7 +9,7 @@ import {
 
 const OPERATION_INFO_ROOT_URL =
   "https://raw.githubusercontent.com/ArknightsAssets/ArknightsGamedata/refs/heads/master/en/gamedata/levels/";
-const STAGE_MAP_URL =
+const STAGE_TABLE_URL =
   "https://raw.githubusercontent.com/ArknightsAssets/ArknightsGamedata/refs/heads/master/en/gamedata/excel/stage_table.json";
 const ENEMY_HANDBOOK_URL =
   "https://raw.githubusercontent.com/ArknightsAssets/ArknightsGamedata/refs/heads/master/en/gamedata/excel/enemy_handbook_table.json";
@@ -36,7 +36,7 @@ const enemyMapPromise: Promise<EnemyMap> = fetch(
 );
 
 const stageMapPromise: Promise<{ [code: string]: RichStageInfo }> = fetch(
-  STAGE_MAP_URL,
+  STAGE_TABLE_URL,
 ).then((r) =>
   r.json().then((s) => {
     const runeMap: { [id: string]: SixStarRuneData } = {};
