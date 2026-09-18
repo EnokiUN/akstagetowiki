@@ -1,6 +1,6 @@
 import {
   EnemyData,
-  EnemyHandbookLevelInfo,
+  EnemyDbRef,
   ItemInfo,
   OperationInfo,
   RichStageInfo,
@@ -22,18 +22,13 @@ const stageInput: HTMLInputElement = document.querySelector("#stage-input")!;
 const button: HTMLButtonElement = document.querySelector("#convert")!;
 const output: HTMLTextAreaElement = document.querySelector("#output")!;
 
-type EnemyMap = {
-  levelInfo: EnemyHandbookLevelInfo[];
-  enemies: { [id: string]: EnemyData };
-};
-
-const enemyMapPromise: Promise<EnemyMap> = fetch(
+const enemyMapPromise: Promise<{ [id: string]: EnemyData }> = fetch(
   ENEMY_HANDBOOK_URL,
 ).then((r) =>
   r.json().then((h) => {
-    const enemyMap: EnemyMap = { levelInfo: h.levelInfoList, enemies: {} };
+    const enemyMap: { [id: string]: EnemyData } = {};
     (Object.values(h.enemyData) as EnemyData[]).forEach((enemy: EnemyData) => {
-      enemyMap.enemies[enemy.enemyId] = enemy;
+      enemyMap[enemy.enemyId] = enemy;
     });
     return enemyMap;
   })
@@ -171,12 +166,12 @@ const formatStageInfo = async (
   // TODO: static
 
   const handleDrops = (cond: string, field: string) => {
-    const firstDrops = info.stageDropInfo.displayDetailRewards.filter((d) =>
+    const drops = info.stageDropInfo.displayDetailRewards.filter((d) =>
       d.dropType == cond
     );
-    if (firstDrops) {
-      operationData += `${field} = `;
-      for (const drop of firstDrops) {
+    if (drops.length) {
+      operationData += `|${field} = `;
+      for (const drop of drops) {
         operationData += `{{I|${itemMap[drop.id].name}|rarity=${
           getItemRarity(drop)
         }}}`;
@@ -190,9 +185,30 @@ const formatStageInfo = async (
   handleDrops("SPECIAL", "specdrops");
   handleDrops("ADDITIONAL", "extradrops");
 
-  // TODO: normal
-  // TODO: elite
-  // TODO: boss
+  const getEnemyCount = (e: EnemyDbRef) =>
+    e.id in enemyCounter ? enemyCounter[e.id] : 0;
+
+  const handleEnemies = (tier: string, field: string) => {
+    const enemies = operationInfo.enemyDbRefs.filter((e) =>
+      enemyMap[e.id]?.enemyLevel == tier
+    );
+    if (enemies.length) {
+      operationData += `|${field} = `;
+      for (
+        const enemy of enemies.sort((e1, e2) =>
+          getEnemyCount(e2) - getEnemyCount(e1)
+        )
+      ) {
+        operationData += `{{E|${enemyMap[enemy.id].name}${
+          enemy.id in enemyCounter ? `|${enemyCounter[enemy.id]}` : ""
+        }}}`;
+      }
+      operationData += "\n";
+    }
+  };
+  handleEnemies("NORMAL", "normal");
+  handleEnemies("ELITE", "elite");
+  handleEnemies("BOSS", "boss");
 
   if (runes) {
     operationData += `|ss1a = ${
