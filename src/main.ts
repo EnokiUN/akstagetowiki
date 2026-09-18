@@ -82,7 +82,8 @@ const formatStageInfo = async (
   const enemyMap = await enemyMapPromise;
 
   const operationInfo: OperationInfo = await fetch(
-    OPERATION_INFO_ROOT_URL + info.levelId.toLowerCase() + ".json",
+    OPERATION_INFO_ROOT_URL +
+      info.levelId.toLowerCase().replace("easy", "main") + ".json",
   ).then((r) => r.json());
 
   let operationData = "{{Operation data\n";
