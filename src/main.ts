@@ -9,14 +9,17 @@ import {
   StageInfo,
 } from "./interfaces.ts";
 
+const SERVER = new URLSearchParams(window.location.search).get("server") ??
+  "en";
+
 const OPERATION_INFO_ROOT_URL =
-  "https://raw.githubusercontent.com/ArknightsAssets/ArknightsGamedata/refs/heads/master/en/gamedata/levels/";
+  `https://raw.githubusercontent.com/ArknightsAssets/ArknightsGamedata/refs/heads/master/${SERVER}/gamedata/levels/`;
 const STAGE_TABLE_URL =
-  "https://raw.githubusercontent.com/ArknightsAssets/ArknightsGamedata/refs/heads/master/en/gamedata/excel/stage_table.json";
+  `https://raw.githubusercontent.com/ArknightsAssets/ArknightsGamedata/refs/heads/master/${SERVER}/gamedata/excel/stage_table.json`;
 const ENEMY_HANDBOOK_URL =
-  "https://raw.githubusercontent.com/ArknightsAssets/ArknightsGamedata/refs/heads/master/en/gamedata/excel/enemy_handbook_table.json";
+  `https://raw.githubusercontent.com/ArknightsAssets/ArknightsGamedata/refs/heads/master/${SERVER}/gamedata/excel/enemy_handbook_table.json`;
 const ITEM_TABLE_URL =
-  "https://raw.githubusercontent.com/ArknightsAssets/ArknightsGamedata/refs/heads/master/en/gamedata/excel/item_table.json";
+  `https://raw.githubusercontent.com/ArknightsAssets/ArknightsGamedata/refs/heads/master/${SERVER}/gamedata/excel/item_table.json`;
 
 const stageInput: HTMLInputElement = document.querySelector("#stage-input")!;
 const button: HTMLButtonElement = document.querySelector("#convert")!;
