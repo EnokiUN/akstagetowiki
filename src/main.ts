@@ -1,9 +1,11 @@
 import {
   EnemyData,
   EnemyHandbookLevelInfo,
+  ItemInfo,
   OperationInfo,
   RichStageInfo,
   SixStarRuneData,
+  StageDetailRewardDisplay,
   StageInfo,
 } from "./interfaces.ts";
 
@@ -13,6 +15,8 @@ const STAGE_TABLE_URL =
   "https://raw.githubusercontent.com/ArknightsAssets/ArknightsGamedata/refs/heads/master/en/gamedata/excel/stage_table.json";
 const ENEMY_HANDBOOK_URL =
   "https://raw.githubusercontent.com/ArknightsAssets/ArknightsGamedata/refs/heads/master/en/gamedata/excel/enemy_handbook_table.json";
+const ITEM_TABLE_URL =
+  "https://raw.githubusercontent.com/ArknightsAssets/ArknightsGamedata/refs/heads/master/en/gamedata/excel/item_table.json";
 
 const stageInput: HTMLInputElement = document.querySelector("#stage-input")!;
 const button: HTMLButtonElement = document.querySelector("#convert")!;
@@ -32,6 +36,18 @@ const enemyMapPromise: Promise<EnemyMap> = fetch(
       enemyMap.enemies[enemy.enemyId] = enemy;
     });
     return enemyMap;
+  })
+);
+
+const itemMapPromise: Promise<{ [id: string]: ItemInfo }> = fetch(
+  ITEM_TABLE_URL,
+).then((r) =>
+  r.json().then((h) => {
+    const itemMap: { [id: string]: ItemInfo } = {};
+    (Object.values(h.items) as ItemInfo[]).forEach((item: ItemInfo) => {
+      itemMap[item.itemId] = item;
+    });
+    return itemMap;
   })
 );
 
@@ -75,11 +91,22 @@ const formatDesc = (s: string) =>
     "$1'''<[[",
   ).replace(/>( *?)<\/>/g, "]]>'''$1").replace("\n", "</br>");
 
+const ITEM_RARITY_MAP: { [rarity: string]: number } = {
+  ALWAYS: 1,
+  ALMOST: 2,
+  USUAL: 3,
+  OFTEN: 4,
+  SOMETIMES: 5,
+};
+const getItemRarity = (item: StageDetailRewardDisplay) =>
+  item.dropType == "COMPLETE" ? 0 : ITEM_RARITY_MAP[item.occPercent];
+
 const formatStageInfo = async (
   info: StageInfo,
   runes: { [name: string]: SixStarRuneData } | undefined = undefined,
 ) => {
   const enemyMap = await enemyMapPromise;
+  const itemMap = await itemMapPromise;
 
   const operationInfo: OperationInfo = await fetch(
     OPERATION_INFO_ROOT_URL +
@@ -108,6 +135,9 @@ const formatStageInfo = async (
   }
   if (info.diffGroup == "TOUGH") {
     operationData += "|adverse = true\n";
+  }
+  if (info.difficulty == "FOUR_STAR") {
+    operationData += "|challenge = true\n";
   }
   if (info.dangerLevel) {
     operationData += `|level = ${info.dangerLevel}\n`;
@@ -139,12 +169,30 @@ const formatStageInfo = async (
 
   // TODO: deployable
   // TODO: static
-  // TODO: firstdrop
-  // TODO: regdrops
-  // TODO: specdrops
-  // TODO: extradrops
+
+  const handleDrops = (cond: string, field: string) => {
+    const firstDrops = info.stageDropInfo.displayDetailRewards.filter((d) =>
+      d.dropType == cond
+    );
+    if (firstDrops) {
+      operationData += `${field} = `;
+      for (const drop of firstDrops) {
+        operationData += `{{I|${itemMap[drop.id].name}|rarity=${
+          getItemRarity(drop)
+        }}}`;
+      }
+      operationData += "\n";
+    }
+  };
+
+  handleDrops("COMPLETE", "firstdrop");
+  handleDrops("NORMAL", "regdrop");
+  handleDrops("SPECIAL", "specdrops");
+  handleDrops("ADDITIONAL", "extradrops");
+
   // TODO: normal
   // TODO: elite
+  // TODO: boss
 
   if (runes) {
     operationData += `|ss1a = ${
