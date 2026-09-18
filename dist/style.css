@@ -1,0 +1,58 @@
+body {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  box-sizing: border-box;
+  margin: 0;
+  gap: 5px;
+  background-color: #335;
+  color: #eee;
+}
+
+#input {
+  border: 1px solid #aaa;
+  border-radius: 10px;
+  padding: 5px;
+}
+
+#input-form {
+  display: flex;
+  gap: 2px;
+  flex-direction: column;
+}
+
+#url-input, #stage-input {
+  width: 90%;
+  background-color: inherit;
+  color: inherit;
+  border: 1px solid #aaa;
+}
+
+#convert {
+  width: fit-content;
+  background-color: #448;
+  color: inherit;
+  border: unset;
+  border-radius: 5px;
+  padding: 2px 5px;
+}
+
+#convert:hover {
+  background-color: #339;
+}
+
+#convert:disabled {
+  opacity: 0.3;
+}
+
+#output {
+  border: 1px solid #aaa;
+  border-radius: 10px;
+  padding: 5px;
+  flex-grow: 1;
+  resize: none;
+  background-color: inherit;
+  color: inherit;
+}
