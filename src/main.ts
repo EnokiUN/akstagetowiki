@@ -130,16 +130,16 @@ const formatStageInfo = async (
     );
     if (enemies.length) {
       operationData += `|${field} = `;
-      for (
-        const enemy of enemies.sort((e1, e2) =>
-          getEnemyCount(e2) - getEnemyCount(e1)
-        )
-      ) {
-        operationData += `{{E|${enemyMap[enemy.id].name.trim()}${
+      operationData += enemies.sort((e1, e2) =>
+        getEnemyCount(e2) - getEnemyCount(e1)
+      ).map((
+        enemy,
+      ) =>
+        `{{E|${enemyMap[enemy.id].name.trim()}${
           enemy.id in enemyCounter ? `|${enemyCounter[enemy.id]}` : ""
-        }}}`;
-      }
-      operationData += "\n";
+        }}}`
+      ).join(", ");
+      operationData += operationData += "\n";
     }
   };
   handleEnemies("NORMAL", "normal");
