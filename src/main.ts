@@ -20,7 +20,7 @@ const formatDesc = (s: string) =>
   s.replace(
     /<@lv\.item>( *?)</g,
     "$1'''<[[",
-  ).replace(/>( *?)<\/>/g, "]]>'''$1").replace("\n", "</br>");
+  ).replace(/>( *?)<\/>/g, "]]>'''$1").replace(/\n/g, "</br>");
 
 const ITEM_RARITY_MAP: { [rarity: string]: number } = {
   ALWAYS: 1,
