@@ -117,7 +117,7 @@ const formatStageInfo = async (
   };
 
   handleDrops("COMPLETE", "firstdrop");
-  handleDrops("NORMAL", "regdrop");
+  handleDrops("NORMAL", "regdrops");
   handleDrops("SPECIAL", "specdrops");
   handleDrops("ADDITIONAL", "extradrops");
 
