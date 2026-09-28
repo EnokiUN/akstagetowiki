@@ -139,7 +139,7 @@ const formatStageInfo = async (
           enemy.id in enemyCounter ? `|${enemyCounter[enemy.id]}` : ""
         }}}`
       ).join(", ");
-      operationData += operationData += "\n";
+      operationData += "\n";
     }
   };
   handleEnemies("NORMAL", "normal");
