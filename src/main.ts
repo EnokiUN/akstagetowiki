@@ -188,7 +188,7 @@ button.addEventListener("click", async (e) => {
   operationInfo +=
     `|episode = \n|intermezzo = \n|sidestory = \n|storycollection = \n|part = \n|prev = \n|next = \n`;
   operationInfo += `|desc = ${formatDesc(defaultDifficulty.description)}\n`;
-  operationInfo += `|note = }}`;
+  operationInfo += `|note = }}\n`;
 
   if (stageInfo.stageInfos.length > 1) {
     operationInfo += `<tabber>`;
