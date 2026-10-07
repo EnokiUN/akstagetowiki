@@ -1,10 +1,10 @@
 import {
   EnemyDbRef,
   OperationInfo,
-  SixStarRuneData,
+  SixStarRuneInfo,
   StageDetailRewardDisplay,
   StageInfo,
-} from "./interfaces.ts";
+} from "./models/index.ts";
 import {
   enemyMapPromise,
   itemMapPromise,
@@ -34,7 +34,7 @@ const getItemRarity = (item: StageDetailRewardDisplay) =>
 
 const formatStageInfo = async (
   info: StageInfo,
-  runes: { [name: string]: SixStarRuneData } | undefined = undefined,
+  runes: { [name: string]: SixStarRuneInfo } | undefined = undefined,
 ) => {
   const enemyMap = await enemyMapPromise;
   const itemMap = await itemMapPromise;
@@ -167,8 +167,15 @@ const formatStageInfo = async (
 
 button.addEventListener("click", async (e) => {
   e.preventDefault();
+  if (stageInput.value == "/reset") {
+    globalThis.localStorage.clear();
+    return;
+  }
+
   const stageMap = await stageMapPromise;
   button.disabled = true;
+  output.disabled = true;
+  output.value = "Loading, please wait...";
 
   const stageInfo = stageMap[stageInput.value];
   const defaultDifficulty = stageInfo?.stageInfos.find((s) =>
@@ -179,6 +186,7 @@ button.addEventListener("click", async (e) => {
   if (!defaultDifficulty) {
     output.value = "Failed to find stage";
     button.disabled = false;
+    output.disabled = false;
     return;
   }
 
@@ -236,6 +244,6 @@ button.addEventListener("click", async (e) => {
   }
 
   output.value = operationInfo;
-
+  output.disabled = false;
   button.disabled = false;
 });
