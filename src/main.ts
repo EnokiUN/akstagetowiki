@@ -1,7 +1,7 @@
 import {
   EnemyDbRef,
   OperationInfo,
-  SixStarRuneInfo,
+  SixStarRuneData,
   StageDetailRewardDisplay,
   StageInfo,
 } from "./models/index.ts";
@@ -34,7 +34,7 @@ const getItemRarity = (item: StageDetailRewardDisplay) =>
 
 const formatStageInfo = async (
   info: StageInfo,
-  runes: { [name: string]: SixStarRuneInfo } | undefined = undefined,
+  runes: { [name: string]: SixStarRuneData } | undefined = undefined,
 ) => {
   const enemyMap = await enemyMapPromise;
   const itemMap = await itemMapPromise;
@@ -169,6 +169,25 @@ button.addEventListener("click", async (e) => {
   e.preventDefault();
   if (stageInput.value == "/reset") {
     globalThis.localStorage.clear();
+    return;
+  } else if (stageInput.value.startsWith("/enemies")) {
+    const stageCode = stageInput.value.split(" ")[1];
+    const stageMap = await stageMapPromise;
+    const stages = Object.keys(stageMap).filter((s) => s.match(stageCode));
+    const enemyIDs = new Set();
+    for (const code of stages) {
+      for (const stage of stageMap[code].stageInfos) {
+        if (!stage.levelId) continue;
+        const operationInfo: OperationInfo = await fetch(
+          OPERATION_INFO_ROOT_URL +
+            stage.levelId.toLowerCase().replace("easy", "main") + ".json",
+        ).then((r) => r.json());
+        for (const entry of operationInfo.enemyDbRefs) {
+          enemyIDs.add(entry.id);
+        }
+      }
+    }
+    output.value = Array.from(enemyIDs).join(", ");
     return;
   }
 

@@ -1,6 +1,6 @@
 import { CharacterInfo } from "./models/characters.ts";
 import {
-  EnemyInfo,
+  EnemyData,
   ItemInfo,
   RichStageInfo,
   SixStarRuneData,
@@ -18,6 +18,7 @@ export const OPERATION_INFO_ROOT_URL =
   `https://raw.githubusercontent.com/ArknightsAssets/ArknightsGamedata/refs/heads/master/${SERVER}/gamedata/levels/`;
 const STAGE_TABLE_URL =
   `https://raw.githubusercontent.com/ArknightsAssets/ArknightsGamedata/refs/heads/master/${SERVER}/gamedata/excel/stage_table.json`;
+
 const ENEMY_HANDBOOK_URL =
   "https://raw.githubusercontent.com/ArknightsAssets/ArknightsGamedata/refs/heads/master/en/gamedata/excel/enemy_handbook_table.json";
 const ENEMY_HANDBOOK_URL_CN =
@@ -46,24 +47,24 @@ const getCached = <T>(key: string): T | null => {
   return null;
 };
 
-export const enemyMapPromise: Promise<{ [id: string]: EnemyInfo }> = fetch(
+export const enemyMapPromise: Promise<{ [id: string]: EnemyData }> = fetch(
   ENEMY_HANDBOOK_URL,
 ).then((r) =>
   r.json().then(async (h) => {
     const cacheKey = "enemies" + (IS_CN ? "-cn" : "");
-    const enemyMap: { [id: string]: EnemyInfo } = {};
+    const enemyMap: { [id: string]: EnemyData } = {};
     const cached: typeof enemyMap | null = getCached(cacheKey);
     if (cached) {
       return cached;
     }
-    (Object.values(h.enemyInfo) as EnemyInfo[]).forEach((enemy: EnemyInfo) => {
+    (Object.values(h.enemyData) as EnemyData[]).forEach((enemy: EnemyData) => {
       enemyMap[enemy.enemyId] = enemy;
     });
     if (SERVER == "cn") {
       const cnEnemies = await fetch(ENEMY_HANDBOOK_URL_CN).then((r) =>
         r.json()
       );
-      (Object.values(cnEnemies.enemyInfo) as EnemyInfo[]).forEach(
+      (Object.values(cnEnemies.enemyInfo) as EnemyData[]).forEach(
         (enemy) => {
           if (!(enemy.enemyId in enemyMap)) {
             enemyMap[enemy.enemyId] = enemy;
@@ -71,10 +72,10 @@ export const enemyMapPromise: Promise<{ [id: string]: EnemyInfo }> = fetch(
         },
       );
     }
-    globalThis.localStorage.setItem(
-      cacheKey,
-      JSON.stringify({ timestamp: new Date().getTime(), map: enemyMap }),
-    );
+    // globalThis.localStorage.setItem(
+    // cacheKey,
+    // JSON.stringify({ timestamp: new Date().getTime(), map: enemyMap }),
+    // );
     return enemyMap;
   })
 );
@@ -102,10 +103,10 @@ export const itemMapPromise: Promise<{ [id: string]: ItemInfo }> = fetch(
         },
       );
     }
-    globalThis.localStorage.setItem(
-      cacheKey,
-      JSON.stringify({ timestamp: new Date().getTime(), map: itemMap }),
-    );
+    // globalThis.localStorage.setItem(
+    // cacheKey,
+    // JSON.stringify({ timestamp: new Date().getTime(), map: itemMap }),
+    // );
     return itemMap;
   })
 );
@@ -146,10 +147,10 @@ export const stageMapPromise: Promise<{ [code: string]: RichStageInfo }> =
         handleRunes(stage.advancedRuneIdList1);
         handleRunes(stage.advancedRuneIdList2);
       });
-      globalThis.localStorage.setItem(
-        cacheKey,
-        JSON.stringify({ timestamp: new Date().getTime(), map: stageMap }),
-      );
+      // globalThis.localStorage.setItem(
+      // cacheKey,
+      // JSON.stringify({ timestamp: new Date().getTime(), map: stageMap }),
+      // );
       return stageMap;
     })
   );
@@ -179,10 +180,10 @@ export const charMapPromise: Promise<{ [id: string]: CharacterInfo }> = fetch(
         },
       );
     }
-    globalThis.localStorage.setItem(
-      cacheKey,
-      JSON.stringify({ timestamp: new Date().getTime(), map: characterMap }),
-    );
+    // globalThis.localStorage.setItem(
+    // cacheKey,
+    // JSON.stringify({ timestamp: new Date().getTime(), map: characterMap }),
+    // );
     return characterMap;
   })
 );
@@ -212,10 +213,10 @@ export const skillMapPromise: Promise<{ [id: string]: SkillInfo }> = fetch(
         },
       );
     }
-    globalThis.localStorage.setItem(
-      cacheKey,
-      JSON.stringify({ timestamp: new Date().getTime(), map: skillMap }),
-    );
+    // globalThis.localStorage.setItem(
+    // cacheKey,
+    // JSON.stringify({ timestamp: new Date().getTime(), map: skillMap }),
+    // );
     return skillMap;
   })
 );

@@ -15,7 +15,7 @@ export interface EnemyHandbookLevelInfoRange {
   max: number;
 }
 
-export interface EnemyInfo {
+export interface EnemyData {
   enemyId: string;
   enemyIndex: string;
   enemyTags: null; // always null idk
