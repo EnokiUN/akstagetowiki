@@ -6,6 +6,8 @@ import {
   StageInfo,
 } from "./models/index.ts";
 import {
+  DB_STORE_NAME,
+  dbPromise,
   enemyMapPromise,
   itemMapPromise,
   OPERATION_INFO_ROOT_URL,
@@ -168,9 +170,20 @@ const formatStageInfo = async (
 button.addEventListener("click", async (e) => {
   e.preventDefault();
   if (stageInput.value == "/reset") {
-    globalThis.localStorage.clear();
+    // TODO: find a better way to also do this (probably just isolate this into a helper function tbh)
+    const db = await dbPromise;
+    if (db) {
+      output.value = "Resetting cache";
+      const transaction = db.transaction(DB_STORE_NAME, "readwrite");
+      const store = transaction.objectStore(DB_STORE_NAME);
+      const request = store.clear();
+      request.onsuccess = () => {
+        output.value = "Cache reset, please refresh";
+      };
+    }
     return;
   } else if (stageInput.value.startsWith("/enemies")) {
+    // TODO: find a better way to do this
     const stageCode = stageInput.value.split(" ")[1];
     const stageMap = await stageMapPromise;
     const stages = Object.keys(stageMap).filter((s) => s.match(stageCode));
