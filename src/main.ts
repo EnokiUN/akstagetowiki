@@ -104,6 +104,13 @@ const formatStageInfo = async (
   operationData += `|lp = ${operationInfo.options.maxLifePoint}\n`;
   operationData += `|dp = ${operationInfo.options.initialCost}\n`;
 
+  if (
+    info.isPredefined || info.isHardPredefined ||
+    info.isSkillSelectablePredefined
+  ) {
+    operationData += "|fixed = true\n";
+  }
+
   if (operationInfo.predefines.tokenCards.length) {
     operationData += "|deployable = " +
       operationInfo.predefines.tokenCards.map((c) => {
@@ -125,13 +132,35 @@ const formatStageInfo = async (
       }).join(", ") + "\n";
   }
 
-  // TODO: fixed
+  if (operationInfo.predefines.characterInsts) {
+    operationData += "|pre = " +
+      operationInfo.predefines.characterInsts.map((c) => {
+        const char = charMap[c.inst.characterKey];
+        let skillInfo = "";
+        if (c.skillIndex >= 0) {
+          const skillId = char.skills[c.skillIndex].skillId;
+          const skill = skillMap[skillId];
+          skillInfo = `, {{Skill|${skill.levels[c.mainSkillLvl - 1].name}}} `;
+          skillInfo += c.mainSkillLvl > 7
+            ? `Spec. Level ${c.mainSkillLvl - 7}`
+            : `Level ${c.mainSkillLvl}`;
+        }
+        return `{{C|${char.name}}} (Elite ${
+          c.inst.phase.split("_")[1]
+        } Level ${c.inst.level}${skillInfo})`;
+      }).join(", ") +
+      "\n";
+  }
+
   // TODO: comp
-  // TODO: pre
 
   // TODO: terrain
 
   const handleDrops = (cond: string, field: string) => {
+    if (!info.stageDropInfo.displayDetailRewards.length) {
+      return;
+    }
+
     const drops = info.stageDropInfo.displayDetailRewards.filter((d) =>
       d.dropType == cond
     );

@@ -94,7 +94,7 @@ export interface OperationWaveFragmentAction {
 }
 
 export interface OperationPredefines {
-  charInsts: OperationPredifineInst[];
+  characterInsts: OperationPredifineInst[];
   tokenInsts: OperationPredifineInst[];
   characterCards: OperationPredifineToken[];
   tokenCards: OperationPredifineToken[];

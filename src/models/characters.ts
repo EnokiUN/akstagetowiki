@@ -5,6 +5,8 @@ export interface CharacterInfo {
   spTargetType?: "NONE" | "ROGUE";
   spTargetId?: string;
   canUseGeneralPotentialItem: false;
+  // ...
+  skills: { skillId: string }[];
 }
 
 // "canUseGeneralPotentialItem": true,
