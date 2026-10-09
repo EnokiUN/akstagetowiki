@@ -1,7 +1,7 @@
 export interface CharacterInfo {
   name: string;
   description: string;
-  srotIndex: number;
+  sortIndex: number;
   spTargetType?: "NONE" | "ROGUE";
   spTargetId?: string;
   canUseGeneralPotentialItem: false;

@@ -6,11 +6,13 @@ import {
   StageInfo,
 } from "./models/index.ts";
 import {
+  charMapPromise,
   DB_STORE_NAME,
   dbPromise,
   enemyMapPromise,
   itemMapPromise,
   OPERATION_INFO_ROOT_URL,
+  skillMapPromise,
   stageMapPromise,
 } from "./data.ts";
 
@@ -40,6 +42,8 @@ const formatStageInfo = async (
 ) => {
   const enemyMap = await enemyMapPromise;
   const itemMap = await itemMapPromise;
+  const charMap = await charMapPromise;
+  const skillMap = await skillMapPromise;
 
   const operationInfo: OperationInfo = await fetch(
     OPERATION_INFO_ROOT_URL +
@@ -100,8 +104,32 @@ const formatStageInfo = async (
   operationData += `|lp = ${operationInfo.options.maxLifePoint}\n`;
   operationData += `|dp = ${operationInfo.options.initialCost}\n`;
 
-  // TODO: deployable
-  // TODO: static
+  if (operationInfo.predefines.tokenCards.length) {
+    operationData += "|deployable = " +
+      operationInfo.predefines.tokenCards.map((c) => {
+        const name = charMap[c.inst.characterKey].name;
+        return `{{D|${name}|${c.initialCnt}}}`;
+      }).join(", ") + "\n";
+  }
+
+  if (operationInfo.predefines.tokenInsts.length) {
+    const staticCounter: { [staticId: string]: number } = {};
+    operationInfo.predefines.tokenInsts.forEach((i) => {
+      staticCounter[i.inst.characterKey] =
+        (staticCounter[i.inst.characterKey] ?? 0) + 1;
+    });
+    operationData += "|static = " +
+      Object.entries(staticCounter).map(([i, n]) => {
+        const name = charMap[i].name;
+        return `{{D|${name}|${n}}}`;
+      }).join(", ") + "\n";
+  }
+
+  // TODO: fixed
+  // TODO: comp
+  // TODO: pre
+
+  // TODO: terrain
 
   const handleDrops = (cond: string, field: string) => {
     const drops = info.stageDropInfo.displayDetailRewards.filter((d) =>

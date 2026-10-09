@@ -16,8 +16,8 @@ export interface OperationInfo {
   enemyDbRefs: EnemyDbRef[];
   waves: OperationWave[];
   branches: object;
-  predefines: object;
-  hardPredefines: object;
+  predefines: OperationPredefines;
+  hardPredefines: OperationPredefines;
   excludeCharIdList: string[];
   randomSeed: number;
   operaConfig?: string;
@@ -91,4 +91,41 @@ export interface OperationWaveFragmentAction {
   weight: number;
   dontBlockWave: boolean;
   forceBlockWaveInBranch: boolean;
+}
+
+export interface OperationPredefines {
+  charInsts: OperationPredifineInst[];
+  tokenInsts: OperationPredifineInst[];
+  characterCards: OperationPredifineToken[];
+  tokenCards: OperationPredifineToken[];
+}
+
+interface OperationPredifineBase {
+  alias?: string;
+  uniEquipIds?: { key: string; level: number }[];
+  showSpIllust: boolean;
+  masterInfos?: object;
+  inst: {
+    characterKey: string;
+    level: number;
+    phase: "PHASE_0" | "PHASE_1" | "PHASE_2";
+    favorPoint: number;
+    potentialRank: number;
+  };
+  skillIndex: number;
+  mainSkillLvl: number;
+  skinId: string;
+  tmplId?: object;
+  overrideSkillBlackboard?: object;
+  overrideTalents?: object;
+}
+
+export interface OperationPredifineInst extends OperationPredifineBase {
+  position: { row: number; col: number };
+  direction: "UP" | "DOWN" | "LEFT" | "RIGHT";
+}
+
+export interface OperationPredifineToken extends OperationPredifineBase {
+  initialCnt: number;
+  hidden: boolean;
 }
