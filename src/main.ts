@@ -37,6 +37,12 @@ const ITEM_RARITY_MAP: { [rarity: string]: number } = {
 const getItemRarity = (item: StageDetailRewardDisplay) =>
   item.dropType == "COMPLETE" ? 0 : ITEM_RARITY_MAP[item.occPercent];
 
+const getEnemyId = (entry: EnemyDbRef) => {
+  return entry.overwrittenData?.prefabKey.m_defined
+    ? entry.overwrittenData.prefabKey.m_value ?? entry.id
+    : entry.id;
+};
+
 const formatStageInfo = async (
   info: StageInfo,
   runes: { [name: string]: SixStarRuneData } | undefined = undefined,
@@ -85,16 +91,20 @@ const formatStageInfo = async (
 
   let enemyCount = 0;
   const enemyCounter: { [enemyId: string]: number } = {};
+  const trueEnemyIds = Object.fromEntries(
+    operationInfo.enemyDbRefs.map((r) => [r.id, getEnemyId(r)]),
+  );
 
   for (const wave of operationInfo.waves) {
     for (const fragment of wave.fragments) {
       for (const action of fragment.actions) {
         if (action.actionType == "SPAWN") {
-          if (!(action.key in enemyCounter)) {
-            enemyCounter[action.key] = 0;
+          const trueId = trueEnemyIds[action.key];
+          if (!(trueId in enemyCounter)) {
+            enemyCounter[trueId] = 0;
           }
 
-          enemyCounter[action.key] += action.count;
+          enemyCounter[trueId] += action.count;
           enemyCount += action.count;
         }
       }
@@ -196,7 +206,7 @@ const formatStageInfo = async (
 
   const handleEnemies = (tier: string, field: string) => {
     const enemies = operationInfo.enemyDbRefs.filter((e) =>
-      enemyMap[e.id.replace(/_a$/, "_2")]?.enemyLevel == tier
+      enemyMap[getEnemyId(e)]?.enemyLevel == tier
     );
     if (enemies.length) {
       operationData += `|${field} = `;
@@ -205,7 +215,7 @@ const formatStageInfo = async (
       ).map((
         enemy,
       ) =>
-        `{{E|${enemyMap[enemy.id.replace(/_a$/, "_2")].name.trim()}${
+        `{{E|${enemyMap[getEnemyId(enemy)].name.trim()}${
           enemy.id in enemyCounter ? `|${enemyCounter[enemy.id]}` : ""
         }}}`
       ).join(", ");
@@ -266,12 +276,12 @@ button.addEventListener("click", async (e) => {
             stage.levelId.toLowerCase().replace("easy", "main") + ".json",
         ).then((r) => r.json());
         for (const entry of operationInfo.enemyDbRefs) {
-          enemyIDs.add(entry.id);
+          enemyIDs.add(getEnemyId(entry));
         }
       }
     }
     const enemies = Array.from(enemyIDs).map((enemyId) => {
-      return enemyMap[(enemyId as string).replace(/_a$/, "_2")];
+      return enemyMap[enemyId as string];
     });
     output.value = "";
     for (const enemyType of ["NORMAL", "ELITE", "BOSS"]) {

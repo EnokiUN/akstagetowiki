@@ -47,7 +47,7 @@ export interface EnemyDbRef {
   id: string;
   level: number;
   // overwrittenData?: EnemyDbRefOverwrittenData; // maybe in the future
-  overwrittenData?: object;
+  overwrittenData?: { prefabKey: { m_defined: boolean; m_value: string } };
 }
 
 // export interface EnemyDbRefOverwrittenData {
