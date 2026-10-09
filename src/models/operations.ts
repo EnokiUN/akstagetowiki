@@ -100,7 +100,7 @@ export interface OperationPredefines {
   tokenCards: OperationPredifineToken[];
 }
 
-interface OperationPredifineBase {
+export interface OperationPredifineBase {
   alias?: string;
   uniEquipIds?: { key: string; level: number }[];
   showSpIllust: boolean;

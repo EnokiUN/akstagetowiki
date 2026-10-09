@@ -15,6 +15,7 @@ import {
   skillMapPromise,
   stageMapPromise,
 } from "./data.ts";
+import { OperationPredifineBase } from "./models/operations.ts";
 
 const stageInput: HTMLInputElement = document.querySelector("#stage-input")!;
 const button: HTMLButtonElement = document.querySelector("#convert")!;
@@ -132,27 +133,37 @@ const formatStageInfo = async (
       }).join(", ") + "\n";
   }
 
-  if (operationInfo.predefines.characterInsts) {
+  const formatCharacter = (predefine: OperationPredifineBase) => {
+    const char = charMap[predefine.inst.characterKey];
+    let skillInfo = "";
+    if (predefine.skillIndex >= 0) {
+      const skillId = char.skills[predefine.skillIndex].skillId;
+      const skill = skillMap[skillId];
+      skillInfo = `, {{Skill|${
+        skill.levels[predefine.mainSkillLvl - 1].name
+      }}} `;
+      skillInfo += predefine.mainSkillLvl > 7
+        ? `Spec. Level ${predefine.mainSkillLvl - 7}`
+        : `Level ${predefine.mainSkillLvl}`;
+    }
+    return `{{C|${char.name}}} (Elite ${
+      predefine.inst.phase.split("_")[1]
+    } Level ${predefine.inst.level}${skillInfo})`;
+  };
+
+  if (operationInfo.predefines.characterInsts.length) {
     operationData += "|pre = " +
-      operationInfo.predefines.characterInsts.map((c) => {
-        const char = charMap[c.inst.characterKey];
-        let skillInfo = "";
-        if (c.skillIndex >= 0) {
-          const skillId = char.skills[c.skillIndex].skillId;
-          const skill = skillMap[skillId];
-          skillInfo = `, {{Skill|${skill.levels[c.mainSkillLvl - 1].name}}} `;
-          skillInfo += c.mainSkillLvl > 7
-            ? `Spec. Level ${c.mainSkillLvl - 7}`
-            : `Level ${c.mainSkillLvl}`;
-        }
-        return `{{C|${char.name}}} (Elite ${
-          c.inst.phase.split("_")[1]
-        } Level ${c.inst.level}${skillInfo})`;
-      }).join(", ") +
+      operationInfo.predefines.characterInsts.map(formatCharacter).join(", ") +
       "\n";
   }
 
-  // TODO: comp
+  if (operationInfo.predefines.characterCards.length) {
+    operationData += "|comp = \n" +
+      operationInfo.predefines.characterCards.map((c) =>
+        "*" + formatCharacter(c)
+      ).join("\n") +
+      "\n";
+  }
 
   // TODO: terrain
 
