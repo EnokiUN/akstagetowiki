@@ -188,7 +188,8 @@ button.addEventListener("click", async (e) => {
     const stageMap = await stageMapPromise;
     const stages = Object.keys(stageMap).filter((s) => s.match(stageCode));
     const enemyIDs = new Set();
-    for (const code of stages) {
+    for (const [code, i] of stages.map((s, i) => [s, i])) {
+      output.value = `Fetching enemies from stages (${i}/${stages.length})`;
       for (const stage of stageMap[code].stageInfos) {
         if (!stage.levelId) continue;
         const operationInfo: OperationInfo = await fetch(
