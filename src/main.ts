@@ -196,7 +196,7 @@ const formatStageInfo = async (
 
   const handleEnemies = (tier: string, field: string) => {
     const enemies = operationInfo.enemyDbRefs.filter((e) =>
-      enemyMap[e.id]?.enemyLevel == tier
+      enemyMap[e.id.replace(/_a$/, "_2")]?.enemyLevel == tier
     );
     if (enemies.length) {
       operationData += `|${field} = `;
@@ -205,7 +205,7 @@ const formatStageInfo = async (
       ).map((
         enemy,
       ) =>
-        `{{E|${enemyMap[enemy.id].name.trim()}${
+        `{{E|${enemyMap[enemy.id.replace(/_a$/, "_2")].name.trim()}${
           enemy.id in enemyCounter ? `|${enemyCounter[enemy.id]}` : ""
         }}}`
       ).join(", ");
@@ -254,6 +254,7 @@ button.addEventListener("click", async (e) => {
     // TODO: find a better way to do this
     const stageCode = stageInput.value.split(" ")[1];
     const stageMap = await stageMapPromise;
+    const enemyMap = await enemyMapPromise;
     const stages = Object.keys(stageMap).filter((s) => s.match(stageCode));
     const enemyIDs = new Set();
     for (const [code, i] of stages.map((s, i) => [s, i])) {
@@ -269,7 +270,23 @@ button.addEventListener("click", async (e) => {
         }
       }
     }
-    output.value = Array.from(enemyIDs).join(", ");
+    const enemies = Array.from(enemyIDs).map((enemyId) => {
+      return enemyMap[(enemyId as string).replace(/_a$/, "_2")];
+    });
+    output.value = "";
+    for (const enemyType of ["NORMAL", "ELITE", "BOSS"]) {
+      output.value += `\n==== ${enemyType} ====`;
+      for (const enemy of enemies) {
+        if (enemy.enemyLevel == enemyType) {
+          const cleanName = enemy.name.replace('"', "").replace("\n", "");
+          output.value += `\n\t["${cleanName}"]={name="${cleanName}"${
+            enemy.name.match(/"/)
+              ? `, title="${enemy.name.replace('"', '\\"').replace("\n", "")}"`
+              : ""
+          }, code="${enemy.enemyIndex}", id="${enemy.enemyId}"},`;
+        }
+      }
+    }
     return;
   }
 
