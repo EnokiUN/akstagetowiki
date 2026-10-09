@@ -84,7 +84,9 @@ const formatStageInfo = async (
     operationData += "|challenge = true\n";
   }
   if (info.dangerLevel) {
-    operationData += `|level = ${info.dangerLevel}\n`;
+    operationData += `|level = ${
+      info.dangerLevel.replace(/lv\./i, "Level ").replace("精英", "Elite ")
+    }\n`;
   }
   operationData += `|sanity = ${info.apCost}\n`;
   operationData += `|unit limit = ${operationInfo.options.characterLimit}\n`;
