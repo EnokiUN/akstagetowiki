@@ -190,7 +190,7 @@ const formatStageInfo = async (
     if (drops.length) {
       operationData += `|${field} = `;
       for (const drop of drops) {
-        operationData += `{{I|${itemMap[drop.id].name.trim()}|rarity=${
+        operationData += `{{I|${itemMap[drop.id].name.trim()}|rate=${
           getItemRarity(drop)
         }}}`;
       }
