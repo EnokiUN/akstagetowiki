@@ -12,7 +12,9 @@ var N=24*60*60*1e3,P=new URLSearchParams(globalThis.location.search).get("server
 `,(e.isPredefined||e.isHardPredefined||e.isSkillSelectablePredefined)&&(t+=`|fixed = true
 `),a.predefines.tokenCards.length&&(t+="|deployable = "+a.predefines.tokenCards.map(n=>`{{D|${s[n.inst.characterKey].name}|${n.initialCnt}}}`).join(", ")+`
 `),a.predefines.tokenInsts.length){let n={};a.predefines.tokenInsts.forEach(p=>{n[p.inst.characterKey]=(n[p.inst.characterKey]??0)+1}),t+="|static = "+Object.entries(n).map(([p,d])=>`{{D|${s[p].name}|${d}}}`).join(", ")+`
-`}let m=n=>{let p=s[n.inst.characterKey],d="";if(n.skillIndex>=0){let l=p.skills[n.skillIndex].skillId;d=`, {{Skill|${r[l].levels[n.mainSkillLvl-1].name}}} `,d+=n.mainSkillLvl>7?`Spec. Level ${n.mainSkillLvl-7}`:`Level ${n.mainSkillLvl}`}return`{{C|${p.name}}} (Elite ${n.inst.phase.split("_")[1]} Level ${n.inst.level}${d})`};a.predefines.characterInsts.length&&(t+="|pre = "+a.predefines.characterInsts.map(m).join(", ")+`
+`}let m=n=>{let p=s[n.inst.characterKey],d="";if(n.skillIndex>=0){let l=p.skills[n.skillIndex].skillId;d=`, {{Skill|${r[l].levels[n.mainSkillLvl-1].name}}} `,d+=n.mainSkillLvl>7?`Spec. Level ${n.mainSkillLvl-7}`:`Level ${n.mainSkillLvl}`}return`{{C|${p.name}}} (Elite ${n.inst.phase.split("_")[1]} Level ${n.inst.level}${d})`};a.predefines.characterInsts.length&&(t+=`|pre = 
+`+a.predefines.characterInsts.map(n=>"*"+m(n)).join(`
+`)+`
 `),a.predefines.characterCards.length&&(t+=`|comp = 
 `+a.predefines.characterCards.map(n=>"*"+m(n)).join(`
 `)+`

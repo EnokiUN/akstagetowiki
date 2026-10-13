@@ -164,8 +164,10 @@ const formatStageInfo = async (
   };
 
   if (operationInfo.predefines.characterInsts.length) {
-    operationData += "|pre = " +
-      operationInfo.predefines.characterInsts.map(formatCharacter).join(", ") +
+    operationData += "|pre = \n" +
+      operationInfo.predefines.characterInsts.map((c) =>
+        "*" + formatCharacter(c)
+      ).join("\n") +
       "\n";
   }
 
