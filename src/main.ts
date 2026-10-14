@@ -285,12 +285,16 @@ button.addEventListener("click", async (e) => {
       }
     }
     const enemies = Array.from(enemyIDs).map((enemyId) => {
-      return enemyMap[enemyId as string];
+      return enemyMap[enemyId as string] ?? enemyId;
     });
     output.value = "";
     for (const enemyType of ["NORMAL", "ELITE", "BOSS"]) {
       output.value += `\n==== ${enemyType} ====`;
       for (const enemy of enemies) {
+        if (typeof enemy == "string") {
+          output.value += `\n\tERROR: FAILED TO FIND INFO ON ${enemy}`;
+          continue;
+        }
         if (enemy.enemyLevel == enemyType) {
           const cleanName = enemy.name.replace('"', "").replace("\n", "");
           output.value += `\n\t["${cleanName}"]={name="${cleanName}"${
