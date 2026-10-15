@@ -240,7 +240,7 @@ const formatStageInfo = async (
     operationData += `|ss2a = ${
       formatDesc(runes[info.advancedRuneIdList2![0]].runeDesc)
     }\n`;
-    operationData += `|ss2a = ${
+    operationData += `|ss2b = ${
       formatDesc(runes[info.advancedRuneIdList2![1]].runeDesc)
     }\n`;
   }

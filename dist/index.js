@@ -23,7 +23,7 @@ var x=24*60*60*1e3,P=new URLSearchParams(globalThis.location.search).get("server
 `)};return b("NORMAL","normal"),b("ELITE","elite"),b("BOSS","boss"),i&&(t+=`|ss1a = ${R(i[e.advancedRuneIdList1[0]].runeDesc)}
 `,t+=`|ss1b = ${R(i[e.advancedRuneIdList1[1]].runeDesc)}
 `,t+=`|ss2a = ${R(i[e.advancedRuneIdList2[0]].runeDesc)}
-`,t+=`|ss2a = ${R(i[e.advancedRuneIdList2[1]].runeDesc)}
+`,t+=`|ss2b = ${R(i[e.advancedRuneIdList2[1]].runeDesc)}
 `),t=t.trim()+"}}",t};E.addEventListener("click",async e=>{if(e.preventDefault(),D.value=="/reset"){let r=await T;if(r){I.value="Resetting cache";let g=r.transaction(h,"readwrite").objectStore(h).clear();g.onsuccess=()=>{I.value="Cache reset, please refresh"}}return}else if(D.value.startsWith("/enemies")){let r=D.value.split(" ")[1],a=await w,t=await A,g=Object.keys(a).filter(d=>d.match(r)),m=new Set;for(let[d,p]of g.map((S,b)=>[S,b])){I.value=`Fetching enemies from stages (${p}/${g.length})`;for(let S of a[d].stageInfos){if(!S.levelId)continue;let b=await fetch(L+S.levelId.toLowerCase().replace("easy","main")+".json").then(n=>n.json());for(let n of b.enemyDbRefs)m.add($(n))}}let y=Array.from(m).map(d=>t[d]??d);I.value="";for(let d of["NORMAL","ELITE","BOSS"]){I.value+=`
 ==== ${d} ====`;for(let p of y){if(typeof p=="string"){I.value+=`
 	ERROR: FAILED TO FIND INFO ON ${p}`;continue}if(p.enemyLevel==d){let S=p.name.replace('"',"").replace(`
