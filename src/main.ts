@@ -181,7 +181,11 @@ const formatStageInfo = async (
 
   // TODO: terrain
 
-  const handleDrops = (cond: string, field: string) => {
+  const handleDrops = (
+    cond: string,
+    field: string,
+    showRates: boolean = true,
+  ) => {
     if (!info.stageDropInfo.displayDetailRewards.length) {
       return;
     }
@@ -192,9 +196,13 @@ const formatStageInfo = async (
     if (drops.length) {
       operationData += `|${field} = `;
       for (const drop of drops) {
-        operationData += `{{I|${itemMap[drop.id].name.trim()}|rate=${
-          getItemRarity(drop)
-        }}}`;
+        if (showRates) {
+          operationData += `{{I|${itemMap[drop.id].name.trim()}|rate=${
+            getItemRarity(drop)
+          }}}`;
+        } else {
+          operationData += `{{I|${itemMap[drop.id].name.trim()}}}`;
+        }
       }
       operationData += "\n";
     }
@@ -203,7 +211,7 @@ const formatStageInfo = async (
   handleDrops("COMPLETE", "firstdrop");
   handleDrops("NORMAL", "regdrops");
   handleDrops("SPECIAL", "specdrops");
-  handleDrops("ADDITIONAL", "extradrops");
+  handleDrops("ADDITIONAL", "extradrops", false);
 
   const getEnemyCount = (e: EnemyDbRef) =>
     e.id in enemyCounter ? enemyCounter[e.id] : 0;
